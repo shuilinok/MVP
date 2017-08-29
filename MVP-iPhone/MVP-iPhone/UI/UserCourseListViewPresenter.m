@@ -33,7 +33,18 @@
         
         if(error.code == noErr)
         {
-            
+            if([self.courseList count] == 0)
+            {
+                [self.view showBlankView];
+            }
+            else
+            {
+                [self.view showListView];
+            }
+        }
+        else
+        {
+            [self.view showErrorView];
         }
     }];
 }

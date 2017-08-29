@@ -10,10 +10,10 @@
 
 @protocol IUserCourseListView <NSObject>
 
-@property (readonly, strong, nonatomic) UITableViewController *listController;
+- (void)showListView;
 
-@property (readonly, strong, nonatomic) UIViewController *blankController;
+- (void)showBlankView;
 
-@property (readonly, strong, nonatomic) UIViewController *errorController;
+- (void)showErrorView;
 
 @end

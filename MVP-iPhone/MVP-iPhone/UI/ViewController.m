@@ -18,6 +18,7 @@
 @property (strong, nonatomic) UITableViewController *listController;
 @property (strong, nonatomic) UIViewController *blankController;
 @property (strong, nonatomic) UIViewController *errorController;
+
 @end
 
 @implementation ViewController
@@ -42,5 +43,18 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)showListView
+{
+    
+}
 
+- (void)showBlankView
+{
+    
+}
+
+- (void)showErrorView
+{
+    
+}
 @end

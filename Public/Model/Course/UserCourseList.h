@@ -32,6 +32,8 @@
 
 - (void)setWithInfos:(NSArray *)infos;
 
+- (NSUInteger)count;
+
 - (void)load:(ResultCallback)callback;
 
 - (void)cancelLoad;
