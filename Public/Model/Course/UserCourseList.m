@@ -12,19 +12,24 @@
 
 @interface UserCourseListRemoteLoadAction : MCAction
 
+@property (weak, nonatomic) UserCourseList *list;
 @end
 
 @interface UserCourseListLocalLoadAction : MCAction
 
+@property (weak, nonatomic) UserCourseList *list;
 @end
 
 
 @interface UserCourseListLocalRemoteLoadAction : MCAction
 
+@property (weak, nonatomic) UserCourseList *list;
 @end
 
 
 @interface UserCourseListLoadMoreAction : MCAction
+
+@property (weak, nonatomic) UserCourseList *list;
 
 @property (assign, nonatomic) NSUInteger offset;
 
@@ -80,29 +85,36 @@
 {
     [self.loadAction cancel:800];//把原来的取消
     
-    MCAction *loadAction = nil;
+    self.loadAction = nil;
     
     if(self.paramContext.loadVersion == 0)
     {
         if(self.paramContext.loadMode == 0)
         {
-            loadAction = [[UserCourseListRemoteLoadAction alloc] init];
+            UserCourseListRemoteLoadAction *action = [[UserCourseListRemoteLoadAction alloc] init];
+            action.list = self;
+            self.loadAction = action;
         }
         else if(self.paramContext.loadMode == 1)
         {
-            loadAction = [[UserCourseListLocalLoadAction alloc] init];
+            UserCourseListLocalLoadAction *action = [[UserCourseListLocalLoadAction alloc] init];
+            action.list = self;
+            self.loadAction = action;
         }
         else if(self.paramContext.loadMode == 2)
         {
-            loadAction = [[UserCourseListLocalRemoteLoadAction alloc] init];
+            UserCourseListLocalRemoteLoadAction *action = [[UserCourseListLocalRemoteLoadAction alloc] init];
+            action.list = self;
+            self.loadAction = action;
         }
         else if(self.paramContext.loadMode == 3)
         {
             UserCourseListLoadMoreAction *action = [[UserCourseListLoadMoreAction alloc] init];
+            action.list = self;
             action.offset = self.paramContext.offset;
             action.limit = self.paramContext.limit;
             
-            loadAction = action;
+            self.loadAction = action;
         }
     }
     else if(self.paramContext.loadVersion == 1)
@@ -110,14 +122,12 @@
         
     }
     
-    if(loadAction == nil)
+    if(self.loadAction == nil)
     {
         abort();
     }
     
-    self.loadAction = loadAction;
-    
-    [self.loadAction run:self callback:^(NSError *error) {
+    [self.loadAction run:^(NSError *error) {
        
         callback(error);
     }];
@@ -135,10 +145,9 @@
 
 @implementation UserCourseListRemoteLoadAction
 
-- (void)run:(id)context callback:(ResultCallback)callback
+- (void)run
 {
-    self.callback = callback;
-    UserCourseList *list = context;
+    UserCourseList *list = self.list;
     
     //从服务端加载
     list.paramContext.offset = 0;
@@ -153,10 +162,9 @@
 
 @implementation UserCourseListLocalLoadAction
 
-- (void)run:(id)context callback:(ResultCallback)callback
+- (void)run
 {
-    self.callback = callback;
-    UserCourseList *list = context;
+    UserCourseList *list = self.list;
     
     //从本地加载
     list.paramContext.offset = 0;
@@ -171,17 +179,16 @@
 
 @implementation UserCourseListLocalRemoteLoadAction
 
-- (void)run:(id)context callback:(ResultCallback)callback
+- (void)run
 {
-    self.callback = callback;
-    UserCourseList *list = context;
+    UserCourseList *list = self.list;
     
     list.paramContext.offset = 0;
     
     //先从本地加载
     UserCourseListLocalLoadAction *action = [[UserCourseListLocalLoadAction alloc] init];
     
-    [action run:context callback:^(NSError *error) {
+    [action run:^(NSError *error) {
        
         if(self.bCancel)
         {
@@ -191,7 +198,7 @@
         //再从服务端加载
         UserCourseListRemoteLoadAction *action = [[UserCourseListRemoteLoadAction alloc] init];
         
-        [action run:context callback:^(NSError *error) {
+        [action run:^(NSError *error) {
             
             [self callbackError:error];
         }];
@@ -203,10 +210,9 @@
 
 @implementation UserCourseListLoadMoreAction
 
-- (void)run:(id)context callback:(ResultCallback)callback
+- (void)run
 {
-    self.callback = callback;
-    UserCourseList *list = context;
+    UserCourseList *list = self.list;
     
     //加载更多
     NSUInteger offset = self.offset;

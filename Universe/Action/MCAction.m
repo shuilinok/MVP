@@ -13,6 +13,9 @@
 //是否取消运行
 @property (assign, nonatomic) BOOL bCancel;
 
+//运行完后回调函数，外部不要设置，由子类设置
+@property (copy, nonatomic) ResultCallback callback;
+
 @end
 
 @implementation MCAction
@@ -35,13 +38,17 @@
     [self callbackError:error];
 }
 
-- (void)run:(id)context callback:(ResultCallback)callback
+- (void)run:(ResultCallback)callback
 {
     self.callback = callback;
     
+    [self run];
+}
+
+//运行，子类重写
+- (void)run
+{
     //...
-    
-    [self callbackError:nil];
 }
 
 @end

@@ -30,9 +30,9 @@
 
 @property (readonly, strong, nonatomic) UserCourseListParamContext *paramContext;
 
-- (void)setWithInfos:(NSArray *)infos;
-
 - (NSUInteger)count;
+
+- (void)setWithInfos:(NSArray *)infos;
 
 - (void)load:(ResultCallback)callback;
 
